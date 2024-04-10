@@ -15,13 +15,12 @@ class URLMap(db.Model):
                           default=datetime.utcnow())
 
     def to_dict(self):
-        value = {
-            'url': self.original,
-            'short_link': url_for(
+        return {
+            "url": self.original,
+            "short_link": url_for(
                 "short_url", short=self.short, _external=True
             )
         }
-        return value
 
     def from_dict(self, data):
         for key, value in zip(("original", "short"), ("url", "custom_id")):

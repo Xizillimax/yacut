@@ -34,7 +34,7 @@ def push_link():
         data.update({"custom_id": get_unique_short_id()})
     if not MATCH.search(data["custom_id"]):
         raise InvalidAPIUsage(MESSAGE_NOT_CURRECT_SHORT)
-    if URLMap.query.filter_by(short=data['custom_id']).first():
+    if URLMap.query.filter_by(short=data["custom_id"]).first():
         raise InvalidAPIUsage(MESSAGE_ERROR)
     short = URLMap()
     short.from_dict(data)

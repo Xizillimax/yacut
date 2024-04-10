@@ -9,7 +9,7 @@ from .utils import get_unique_short_id, check_original
 MESSAGE_ERROR = "Предложенный вариант короткой ссылки уже существует."
 
 
-@app.route('/', methods=("GET", "POST"))
+@app.route("/", methods=("GET", "POST"))
 def generate_url_page():
     form = ShortURLForm()
     if form.validate_on_submit():
@@ -26,10 +26,10 @@ def generate_url_page():
             db.session.add(short_url)
             db.session.commit()
             flash(url_for("short_url", short=url, _external=True), "link")
-    return render_template('index.html', form=form)
+    return render_template("index.html", form=form)
 
 
-@app.route('/<string:short>', methods=("GET",))
+@app.route("/<string:short>", methods=("GET",))
 def short_url(short):
     return redirect(
         URLMap.query.filter_by(short=short).first_or_404().original
