@@ -1,4 +1,5 @@
 from flask import jsonify, request
+from http import HTTPStatus
 
 from . import app, db
 from .constants import MATCH
@@ -18,8 +19,8 @@ MESSAGE_ERROR = "Предложенный вариант короткой ссы
 def get_link(short_id):
     target = check_original(short_id)
     if not target:
-        raise InvalidAPIUsage(MESSAGE_NOT_ID, 404)
-    return jsonify({"url": target}), 200
+        raise InvalidAPIUsage(MESSAGE_NOT_ID, HTTPStatus.NOT_FOUND)
+    return jsonify({"url": target}), HTTPStatus.OK
 
 
 @app.route("/api/id/", methods=("POST",))
@@ -27,16 +28,16 @@ def push_link():
     data = request.get_json()
     if not data:
         raise InvalidAPIUsage(MESSAGE_NOT_DATA)
-    elif "url" not in data:
+    if "url" not in data:
         raise InvalidAPIUsage(MESSAGE_NOT_URL)
-    elif not data.get("custom_id"):
+    if not data.get("custom_id"):
         data.update({"custom_id": get_unique_short_id()})
-    elif not MATCH.search(data["custom_id"]):
+    if not MATCH.search(data["custom_id"]):
         raise InvalidAPIUsage(MESSAGE_NOT_CURRECT_SHORT)
-    elif URLMap.query.filter_by(short=data['custom_id']).first():
+    if URLMap.query.filter_by(short=data['custom_id']).first():
         raise InvalidAPIUsage(MESSAGE_ERROR)
     short = URLMap()
     short.from_dict(data)
     db.session.add(short)
     db.session.commit()
-    return jsonify(short.to_dict()), 201
+    return jsonify(short.to_dict()), HTTPStatus.CREATED

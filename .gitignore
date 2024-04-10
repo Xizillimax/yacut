@@ -133,3 +133,8 @@ dmypy.json
 tests/
 postman_collection/
 pytest.ini
+
+.tests/
+.postman_collection/
+.pytest.ini
+
